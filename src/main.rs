@@ -46,5 +46,6 @@ fn main() {
       },
       _ => println!("Option '{}' is invalid....", choice),
     };
+    clear();
   }
 }

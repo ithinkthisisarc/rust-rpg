@@ -1,7 +1,6 @@
 use crate::utils::*;
 use rand::Rng;
 use std::cmp::Ordering;
-use std::{thread, time};
 
 pub fn shop(player: &mut Player) {
   printf("Select something to purchase (1-2)\n 1: Upgraded health\n 2: Upgraded weapon\n> ");
@@ -41,20 +40,29 @@ pub fn inv(player: &mut Player) {
 pub fn fight(player: &mut Player) -> i32{
   let mut bosshealth = 30;
   let mut plrhealth = player.health;
+  let mut turn = 0;
   loop {
-    let secret = rand::thread_rng().gen_range(0, 4);
+    clear();
+
+    turn += 1;
+    println!("TURN {}", turn);
+    println!("Player health: {}\nBoss health: {}\n", plrhealth, bosshealth);
+    let secret = rand::thread_rng().gen_range(1, 4);
     println!("Get ready for a fight!");
     println!("CHOOSE A DOOR");
     println!(" _____   _____   _____ ");
     println!("|     | |     | |     |");
     println!("|     | |     | |     |");
     println!("|  1  | |  2  | |  3  |");
-    println!("|_____| |_____| |_____|");
+    println!("|_____| |_____| |_____|\n");
     printf("> ");
     let i = readi();
+    if i == -444 {
+      continue;
+    }
     match i.cmp(&secret) {
-      Ordering::Less => println!("Too small!"),
-      Ordering::Greater => println!("Too big!"),
+      Ordering::Less => println!("Wrong one! The boss was inside {}", secret),
+      Ordering::Greater => println!("Wrong one! The boss was inside {}", secret),
       Ordering::Equal => {
         println!("You got it!\n");
         let plrdmg = rand::thread_rng().gen_range(player.dmg - 2, player.dmg);
@@ -68,20 +76,21 @@ pub fn fight(player: &mut Player) -> i32{
     println!("WHERE WE'RE AT\nBOSS: {}\nPLAYER: {}", bosshealth, plrhealth);
     if plrhealth < 1 {
       println!("You died. Try harder next time...");
+      clear();
       return 0;
     } else if bosshealth < 1 {
       println!("You win! You get $50!!!");
+      clear();
       return 50;
     } else {
       continue;
     }
-    let ten_millis = time::Duration::from_millis(1000);
-    thread::sleep(ten_millis);
   }
 }
 
 pub fn dice() -> i32 {
-  let num = 5;
+  println!("Playing dice");
+  let num = rand::thread_rng().gen_range(1, 6);
   let mut tries = 2;
   while tries != 0 {
     printf("Enter your bet: ");
@@ -103,7 +112,7 @@ pub fn dice() -> i32 {
 }
 
 pub fn guess() -> i32{
-  let num = 7;
+  let num = rand::thread_rng().gen_range(1, 10);
   let mut tries = 3;
   while tries != 0 {
     printf("Enter your guess: ");

@@ -1,5 +1,6 @@
 use std::io;
 use std::io::Write;
+use std::process::Command;
 
 pub struct Player {
   pub name:   String,
@@ -33,7 +34,7 @@ pub fn readi() -> i32 {
     Ok(num) => num,
     Err(_) => {
       println!("Please enter a number!");
-      0
+      -444
     }
   };
   return inp;
@@ -59,6 +60,11 @@ pub fn gen_class(name: String, class: i32) -> Player {
       dmg = 15;
       money = 0;
     },
+    /* 4 => {
+      health = 70;
+      dmg = 5;
+      money = 1000000000;
+    }*/
     _ => println!("'{}' is not a valid class!", class),
   };
 
@@ -70,4 +76,14 @@ pub fn gen_class(name: String, class: i32) -> Player {
     dmg,
   };
   return player;
+}
+
+pub fn clear() {
+  println!("\n\n\tPress enter to continue...");
+  read();
+  // clear terminal
+  let output = Command::new("clear").output().unwrap_or_else(|e| {
+    panic!("failed to execute process: {}", e)
+  });
+  println!("{}", String::from_utf8_lossy(&output.stdout));
 }
