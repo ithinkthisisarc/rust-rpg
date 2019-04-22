@@ -31,7 +31,7 @@ fn main() {
     match choice {
       1 => shop(&mut player),
       2 => inv(&mut player),
-      3 => fight(),
+      3 => player.money += fight(&mut player),
       4 => {
         let i: i32 = rand::thread_rng().gen_range(0,2);
         let reward: i32 = match i {

@@ -1,4 +1,7 @@
 use crate::utils::*;
+use rand::Rng;
+use std::cmp::Ordering;
+use std::{thread, time};
 
 pub fn shop(player: &mut Player) {
   printf("Select something to purchase (1-2)\n 1: Upgraded health\n 2: Upgraded weapon\n> ");
@@ -35,8 +38,46 @@ pub fn inv(player: &mut Player) {
   println!("NAME: {}\nCLASS: {}\nMONEY: {}\nHEALTH: {}\nDMG: {}", player.name, player.class, player.money, player.health, player.dmg);
 }
 
-pub fn fight() {
-
+pub fn fight(player: &mut Player) -> i32{
+  let mut bosshealth = 30;
+  let mut plrhealth = player.health;
+  loop {
+    let secret = rand::thread_rng().gen_range(0, 4);
+    println!("Get ready for a fight!");
+    println!("CHOOSE A DOOR");
+    println!(" _____   _____   _____ ");
+    println!("|     | |     | |     |");
+    println!("|     | |     | |     |");
+    println!("|  1  | |  2  | |  3  |");
+    println!("|_____| |_____| |_____|");
+    printf("> ");
+    let i = readi();
+    match i.cmp(&secret) {
+      Ordering::Less => println!("Too small!"),
+      Ordering::Greater => println!("Too big!"),
+      Ordering::Equal => {
+        println!("You got it!\n");
+        let plrdmg = rand::thread_rng().gen_range(player.dmg - 2, player.dmg);
+        println!("You deal {} damage", plrdmg);
+        bosshealth -= plrdmg;
+      }
+    };
+    let bossdmg = rand::thread_rng().gen_range(7, 15);
+    println!("The boss deals {} damage", bossdmg);
+    plrhealth -= bossdmg;
+    println!("WHERE WE'RE AT\nBOSS: {}\nPLAYER: {}", bosshealth, plrhealth);
+    if plrhealth < 1 {
+      println!("You died. Try harder next time...");
+      return 0;
+    } else if bosshealth < 1 {
+      println!("You win! You get $50!!!");
+      return 50;
+    } else {
+      continue;
+    }
+    let ten_millis = time::Duration::from_millis(1000);
+    thread::sleep(ten_millis);
+  }
 }
 
 pub fn dice() -> i32 {
