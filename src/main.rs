@@ -1,8 +1,6 @@
 mod utils;
-mod menuopts;
 
 use crate::utils::*;
-use crate::menuopts::*;
 use rand::Rng;
 
 fn main() {
@@ -17,7 +15,14 @@ fn main() {
       return;
     }
   };
-  let mut player = gen_class(name, class);
+  let mut player = Player{
+    name,
+    class,
+    money: 0,
+    health: 0,
+    dmg: 0,
+  };
+  player.gen_class(class);
   loop {
     printf("What would you like to do? (1-4)\n 1: Visit the shop\n 2: Check inventory\n 3: Fight\n 4: Play a game\n> ");
     let choice = read();
@@ -29,23 +34,19 @@ fn main() {
       }
     };
     match choice {
-      1 => shop(&mut player),
-      2 => inv(&mut player),
-      3 => player.money += fight(&mut player),
+      1 => player.shop(),
+      2 => player.inv(),
+      3 => player.money += player.fight(),
       4 => {
         let i: i32 = rand::thread_rng().gen_range(0,2);
-        let reward: i32 = match i {
-          0 => dice(),
-          1 => guess(),
-          _ => {
-            println!("Bad number '{}' generated...that's weird", i);
-            0
-          },
-        };
-        player.money += reward;
+        player.game(i);
       },
       _ => println!("Option '{}' is invalid....", choice),
     };
-    clear();
+    if choice != 3 {
+      clear();
+    } else {
+      clear_without_message();
+    }
   }
 }
